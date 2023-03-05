@@ -6,17 +6,17 @@ public class SevenMatch {
 
 	private ArrayList<Player> players;
 	private int playerAmount;
-	int currentTurn = 0;
+	public int currentTurn = 0;
 	boolean matchDone = false;
 	private Deck deck;
-	private int cLow;
-	private int cHigh;
-	private int dLow;
-	private int dHigh;
-	private int sLow;
-	private int sHigh;
-	private int hLow;
-	private int hHigh;
+	public int cLow;
+	public int cHigh;
+	public int dLow;
+	public int dHigh;
+	public int sLow;
+	public int sHigh;
+	public int hLow;
+	public int hHigh;
 	private ArrayList<String> results;
 	
 	public SevenMatch(int playerAmount) {

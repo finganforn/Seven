@@ -145,4 +145,12 @@ public class Deck implements Iterable<Card> {
 		}
 		return false;
 	}
+	public void deleteCardAtIndex(int del) {
+		ArrayList<Card> newCards = new ArrayList<Card>();
+		for (int i = 0; i < cards.size(); i++) {
+			if (del != i)
+				newCards.add(cards.get(i));
+		}
+		cards = newCards;
+	}
 }

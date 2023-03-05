@@ -46,17 +46,39 @@ public class MainFunc {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				if (matchOn == false) {
-					String playersStr = inputBox.getText();
+				String playersStr = inputBox.getText();
+				if (playersStr.equals("0")) {
+					matchOn = false;
+					System.out.println("RESET!");
+				}
+					
+				else if (matchOn == false) {
+					
 					try {
 						int pl = Integer.parseInt(playersStr);
 						currentMatch = new SevenMatch(pl);
 						matchOn = true;
-						Deck d = currentMatch.getDeck();
+						currentMatch.getDeck().shuffleDeck();
+						currentMatch.removePlayerCards();
+						currentMatch.deal();
+						currentMatch.sortAllPlayerDecks();
 						String msg = "match for " + pl + " players started";
 						System.out.println(msg);
 						JOptionPane.showMessageDialog(null, msg);
-						System.out.println("deck: " + d);
+						System.out.println("house deck: " + currentMatch.getDeck());
+						int opener = currentMatch.findOpeningPlayer();
+						currentMatch.currentTurn = opener;
+						if (matchOn) {
+							System.out.println("house deck: " + currentMatch.getDeck());
+							for (int i = 0; i < currentMatch.getSize(); i++) {
+								System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).getPlayerDeck());
+								String cp = "player" + (i+1);
+								cp += currentMatch.getPlayers().get(i).canPlay(currentMatch) ? "can play" : "CAN NOT PLAY";
+								System.out.println(cp);
+							}
+							
+							System.out.println("player " + (currentMatch.currentTurn+1) + " is playing next!"); 
+						}
 					}
 					catch (Exception ex) {
 						System.out.println(ex.getMessage());
@@ -64,8 +86,26 @@ public class MainFunc {
 					
 					
 				}
+				else
 				{
 					//match is ongoing
+					int pi = currentMatch.currentTurn;
+					//System.out.println("asking playerI " + pi + " for a card");
+					Player p = currentMatch.getPlayers().get(pi);
+					Card nc = currentMatch.getPlayers().get(pi).playCard(currentMatch);
+					if ( nc != null) {
+						System.out.println("" + pi + " can play: " + nc);
+					}
+					else {
+						System.out.println("" + pi + " cant play!");
+					}
+					if (pi < currentMatch.getPlayers().size() -1) {
+						currentMatch.currentTurn++;
+					}
+					else
+						currentMatch.currentTurn = 0;
+					
+						
 					
 				}
 			}
@@ -79,15 +119,23 @@ public class MainFunc {
 				// TODO Auto-generated method stub
 				
 				//currentMatch//
-				currentMatch.getDeck().shuffleDeck();
-				currentMatch.removePlayerCards();
-				currentMatch.deal();
-				currentMatch.sortAllPlayerDecks();
-				System.out.println("house deck: " + currentMatch.getDeck());
-				for (int i = 0; i < currentMatch.getSize(); i++) {
-					System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).getPlayerDeck());
+				//currentMatch.getDeck().shuffleDeck();
+				//currentMatch.removePlayerCards();
+				//currentMatch.deal();
+				//currentMatch.sortAllPlayerDecks();
+				if (matchOn) {
+					System.out.println("house deck: " + currentMatch.getDeck());
+					for (int i = 0; i < currentMatch.getSize(); i++) {
+						System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).getPlayerDeck());
+						System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).cardsAsStrings());
+					}
+					
+					System.out.println("player " + (currentMatch.currentTurn+1) + " is playing next!"); 
 				}
-				System.out.println("player " + (currentMatch.findOpeningPlayer()+1) + " starts!");
+				else
+				{
+					System.out.println("match off");
+				}
 			}
         	
         });
