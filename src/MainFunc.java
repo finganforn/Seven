@@ -29,11 +29,12 @@ public class MainFunc {
 		JTextField inputBox = new JTextField("INPUT");
 		JButton send = new JButton("Kör");
 		JButton showCardsBtn = new JButton("Visa kort");
-		JLabel ord = new JLabel("Ord");
+		JLabel ord = new JLabel("No match playing");
 		
 		topPanel.add(inputBox);
 		midPanel.add(send);
 		midPanel.add(showCardsBtn);
+		bottomPanel.add(ord);
 		
 		frame.getContentPane().add(BorderLayout.NORTH, topPanel);
         frame.getContentPane().add(BorderLayout.CENTER, midPanel);        
@@ -73,7 +74,7 @@ public class MainFunc {
 							for (int i = 0; i < currentMatch.getSize(); i++) {
 								System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).getPlayerDeck());
 								String cp = "player" + (i+1);
-								cp += currentMatch.getPlayers().get(i).canPlay(currentMatch) ? "can play" : "CAN NOT PLAY";
+								cp += currentMatch.getPlayers().get(i).canPlay(currentMatch) ? " can play" : " CAN NOT PLAY";
 								System.out.println(cp);
 							}
 							
@@ -89,15 +90,64 @@ public class MainFunc {
 				else
 				{
 					//match is ongoing
+					if (currentMatch.matchDone) {
+						matchOn = false;
+						return;
+					}
 					int pi = currentMatch.currentTurn;
 					//System.out.println("asking playerI " + pi + " for a card");
 					Player p = currentMatch.getPlayers().get(pi);
-					Card nc = currentMatch.getPlayers().get(pi).playCard(currentMatch);
-					if ( nc != null) {
-						System.out.println("" + pi + " can play: " + nc);
+					if (p.getPlayerDeck().count() > 0) {
+						Card nc = currentMatch.getPlayers().get(pi).playCard(currentMatch);
+						if (currentMatch.currentTurn == 0) {
+							//player 1
+							
+							//String rnk = playersStr.substring(0, 1);
+							//String sut = playersStr.substring(1);
+							//nc = Card.fromStrings(rnk, sut);
+						}
+						
+						System.out.println(currentMatch.matchStatus());
+						if ( nc != null) {
+							System.out.println("player" + (pi+1) + " can play: " + nc);
+							currentMatch.playCard(nc);
+							System.out.println("player" + (pi+1) + " played " + nc);
+							
+							if (p.getPlayerDeck().count() == 0) {
+								System.out.println("player " + (pi+1) + " is done!");
+								
+							}
+						}
+						else {
+							System.out.println("" + (pi+1) + " cant play!");
+							int previousPlayer = pi-1;
+							if (previousPlayer == -1)
+								previousPlayer = currentMatch.getPlayers().size() -1;
+							Player pp = currentMatch.getPlayers().get(pi);
+							boolean stillPlayingPlayer = false;
+							while (!stillPlayingPlayer) 
+							{
+								if (pp.getPlayerDeck().count() == 0) {
+									previousPlayer--;
+									if (previousPlayer == -1)
+										previousPlayer = currentMatch.getPlayers().size() - 1;
+								}
+								else stillPlayingPlayer = true;
+								
+							}
+							Card trash = currentMatch.getPlayers().get(pi).selectTrashCard(currentMatch);
+							p.giveCard(trash);
+							currentMatch.sortAllPlayerDecks();
+							
+							System.out.println("player " + (pi+1) + " was given " + trash + " from  player " + (previousPlayer+1));
+							if (pp.getPlayerDeck().count() == 0) {
+								System.out.println("player " + (previousPlayer+1) + " is done!");
+								
+							}
+						}
 					}
 					else {
-						System.out.println("" + pi + " cant play!");
+						System.out.println("player " + (pi+1) + " is done already");
 					}
 					if (pi < currentMatch.getPlayers().size() -1) {
 						currentMatch.currentTurn++;
@@ -127,7 +177,7 @@ public class MainFunc {
 					System.out.println("house deck: " + currentMatch.getDeck());
 					for (int i = 0; i < currentMatch.getSize(); i++) {
 						System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).getPlayerDeck());
-						System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).cardsAsStrings());
+						//System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).cardsAsStrings());
 					}
 					
 					System.out.println("player " + (currentMatch.currentTurn+1) + " is playing next!"); 

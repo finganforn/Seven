@@ -153,4 +153,15 @@ public class Deck implements Iterable<Card> {
 		}
 		cards = newCards;
 	}
+	public int getIndexOfCard(Card c) {
+		int res = -1;
+		
+		for (int i = 0; i < cards.size(); i++)
+		{	
+			Card c2 = cards.get(i);
+			if (c2 != null && c.equals(c2))
+				res = i;
+		}
+		return res;
+	}
 }

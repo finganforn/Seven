@@ -74,5 +74,27 @@ public class Card implements Comparable<Card> {
 			return suit1.compareTo(suit2);
 		}
 	};
+	public boolean playable(SevenMatch m) {
+	
+		
+		int indexed = rank.rankIndex();
+		if (suit == Suit.CLUBS) {
+			if (m.cHigh == indexed || m.cLow == indexed)
+				return true;
+		}
+		else if (suit == Suit.DIAMONDS) {
+			if (m.dHigh == indexed || m.dLow == indexed)
+				return true;
+		}
+		else if (suit == Suit.HEARTS) {
+			if (m.hHigh == indexed || m.hLow == indexed)
+				return true;
+		}
+		else {
+			if (m.sHigh == indexed || m.sLow == indexed)
+				return true;
+		}
+		return false;
+	}
 	
 }

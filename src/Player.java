@@ -15,53 +15,56 @@ public class Player {
 	}
 	
 	
-	public Card passTrashCard(SevenMatch match) {
+	public Card selectTrashCard(SevenMatch match) {
 		Random rnd = new Random();
 		
 		int i = rnd.nextInt(deck.count());
-		return deck.getAtIndex(i);
+		Card c = deck.getAtIndex(i);
+		deck.deleteCardAtIndex(i);
+		return c;
 		
 	}
+	public Card selectPlayCard(SevenMatch match) {
+		int i = -1;
+		ArrayList<Card> res = playableCards(match);
+		if (res.size() == 0)
+			return null;
+		for (int j = 0; j < res.size(); j++) {
+			Card c = res.get(j);
+			if (c.suit == Suit.CLUBS && c.rank == Rank.SEVEN)
+				i = j;
+		}
+		if (i == -1) {
+			Random rnd = new Random();
+			i = rnd.nextInt(res.size());
+		}
+		return res.get(i);
+		
+	}
+	
+	public ArrayList<Card> playableCards(SevenMatch m) {
+		ArrayList<Card> res = new ArrayList<Card>();
+		
+		for (Card c : deck) {
+			if (c.playable(m))
+				res.add(c);
+		}
+		
+		return res;
+	}
+	
 	public Card playCard(SevenMatch match) {
 		Card c = null;
-		Card res = c;
-		int playedCardI = -1;
+		
+		
 		if (this.canPlay(match) == false)
 			return null;
-		ArrayList<Card> playableCards = new ArrayList<Card>();
-		for (int i = 0; i < deck.count(); i++) {
-			c = deck.getAtIndex(i);
-			if (c.suit == Suit.CLUBS) {
-				if (c.rank.rankIndex() == match.cHigh && c.rank.rankIndex() == match.cLow) {
-					res = c;
-					playedCardI = i;
-					playableCards.add(c);
-				}
-			}
-			else if (c.suit == Suit.DIAMONDS) {
-				if (c.rank.rankIndex() == match.dHigh && c.rank.rankIndex() == match.dLow) {
-					res = c;
-					playedCardI = i;
-					playableCards.add(c);
-				}
-			}
-			else if (c.suit == Suit.HEARTS) {
-				if  (c.rank.rankIndex() == match.hHigh && c.rank.rankIndex() == match.hLow) {
-					res = c;
-					playedCardI = i;
-					playableCards.add(c);
-				}
-			}
-			else if (c.suit == Suit.SPADES) {
-				if (c.rank.rankIndex() == match.sHigh && c.rank.rankIndex() == match.sLow) {
-					res = c;
-					playedCardI = i;
-					playableCards.add(c);
-				}
-			}
-		}
-		System.out.println(playableCards);
+		ArrayList<Card> playableCards = this.playableCards(match);
+		c = selectPlayCard(match);
+		//System.out.println("playable cards: " + playableCards);
 		
+		int i = deck.getIndexOfCard(c);
+		deck.deleteCardAtIndex(i);
 		return c;
 	}
 	public void clearDeck() {
@@ -74,29 +77,16 @@ public class Player {
 		return deck.contains7();
 	}
 	public boolean canPlay(SevenMatch match) {
-		boolean res = false;
-		
 		for (Card c : deck) {
-			if (c.suit == Suit.CLUBS) {
-				if (c.rank.rankIndex() == match.cHigh || c.rank.rankIndex() == match.cLow)
-					return true;
-			}
-			else if (c.suit == Suit.DIAMONDS) {
-				if (c.rank.rankIndex() == match.dHigh || c.rank.rankIndex() == match.dLow)
-					return true;
-			}
-			else if (c.suit == Suit.HEARTS) {
-				if (c.rank.rankIndex() == match.hHigh || c.rank.rankIndex() == match.hLow)
-					return true;
-			}
-			else if (c.suit == Suit.SPADES) {
-				if (c.rank.rankIndex() == match.sHigh || c.rank.rankIndex() == match.sLow)
-					return true;
-			}
+			if (c.playable(match))
+				return true;
 		}
 		
-		return res;
+		return false;
 	}
+	
+	
+	
 	public String cardsAsStrings() {
 		String res = "";
 		for (Card c : deck) {

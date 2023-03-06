@@ -73,6 +73,80 @@ public class SevenMatch {
 		for (Player p: players)
 			p.getPlayerDeck().sortBySuit();
 	}
+	public void playCard(Card c) {
+		int i = c.rank.rankIndex();
+		if (c.suit == Suit.CLUBS) {
+			if (i == cLow)
+				cLow--;
+			if (i == cHigh)
+				cHigh++;
+		}
+		else if (c.suit == Suit.DIAMONDS) {
+			if (i == dLow)
+				dLow--;
+			if (i == dHigh)
+				dHigh++;
+		}
+		else if (c.suit == Suit.HEARTS) {
+			if (i == hLow)
+				hLow--;
+			if (i == hHigh)
+				hHigh++;
+		}
+		else if (c.suit == Suit.SPADES) {
+			if (i == sLow)
+				sLow--;
+			if (i == sHigh)
+				sHigh++;
+		}
+		else {//WTF {
+			System.out.println("WTF");
+		}
+	}
+	public String matchStatus() {
+		String res = "BOARD: ";
+		if (cLow == 7)
+			res += "C ";
+		else {
+			res += (cLow+1);
+			res += "C";
+			res += (cHigh-1);
+			res += " ";
+		}
+		if (dLow == 7)
+			res += "D ";
+		else {
+			res += (dLow+1);
+			res += "D";
+			res += (dHigh-1);
+			res += " ";
+		}
+		if (hLow == 7)
+			res += "H ";
+		else {
+			res += (hLow+1);
+			res += "H";
+			res += (hHigh-1);
+			res += " ";
+		}
+		if (sLow == 7)
+			res += "S ";
+		else {
+			res += (sLow+1);
+			res += "S";
+			res += (sHigh-1);
+			res += " ";
+		}
+		
+		
+		
+		
+		return res;
+	}
+	public boolean MatchOver() {
+		return cLow == 1 && cHigh == 13 && dLow == 1 && dHigh == 13 && hLow == 1 && hHigh == 13 && sLow == 1 && sHigh == 13;
+			
+	}
 
 	
 }
