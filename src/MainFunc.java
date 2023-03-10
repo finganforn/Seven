@@ -97,6 +97,7 @@ public class MainFunc {
 					int pi = currentMatch.currentTurn;
 					//System.out.println("asking playerI " + pi + " for a card");
 					Player p = currentMatch.getPlayers().get(pi);
+					System.out.println("player" + (pi+1) + " can play: " + p.playableCards(currentMatch));
 					if (p.getPlayerDeck().count() > 0) {
 						Card nc = currentMatch.getPlayers().get(pi).playCard(currentMatch);
 						if (currentMatch.currentTurn == 0) {
@@ -109,7 +110,7 @@ public class MainFunc {
 						
 						System.out.println(currentMatch.matchStatus());
 						if ( nc != null) {
-							System.out.println("player" + (pi+1) + " can play: " + nc);
+							
 							currentMatch.playCard(nc);
 							System.out.println("player" + (pi+1) + " played " + nc);
 							
@@ -123,7 +124,7 @@ public class MainFunc {
 							int previousPlayer = pi-1;
 							if (previousPlayer == -1)
 								previousPlayer = currentMatch.getPlayers().size() -1;
-							Player pp = currentMatch.getPlayers().get(pi);
+							Player pp = currentMatch.getPlayers().get(previousPlayer);
 							boolean stillPlayingPlayer = false;
 							while (!stillPlayingPlayer) 
 							{
@@ -131,11 +132,12 @@ public class MainFunc {
 									previousPlayer--;
 									if (previousPlayer == -1)
 										previousPlayer = currentMatch.getPlayers().size() - 1;
+									pp = currentMatch.getPlayers().get(previousPlayer);
 								}
 								else stillPlayingPlayer = true;
 								
 							}
-							Card trash = currentMatch.getPlayers().get(pi).selectTrashCard(currentMatch);
+							Card trash = currentMatch.getPlayers().get(previousPlayer).selectTrashCard(currentMatch);
 							p.giveCard(trash);
 							currentMatch.sortAllPlayerDecks();
 							
@@ -174,12 +176,13 @@ public class MainFunc {
 				//currentMatch.deal();
 				//currentMatch.sortAllPlayerDecks();
 				if (matchOn) {
-					System.out.println("house deck: " + currentMatch.getDeck());
+					//System.out.println("house deck: " + currentMatch.getDeck());
 					for (int i = 0; i < currentMatch.getSize(); i++) {
-						System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).getPlayerDeck());
+						System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).getPlayerDeck() + 
+								" difficultyRating: " + currentMatch.getPlayers().get(i).shittinessRating(currentMatch));
 						//System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).cardsAsStrings());
 					}
-					
+					System.out.println(currentMatch.matchStatus());	
 					System.out.println("player " + (currentMatch.currentTurn+1) + " is playing next!"); 
 				}
 				else

@@ -16,9 +16,47 @@ public class Player {
 	
 	
 	public Card selectTrashCard(SevenMatch match) {
-		Random rnd = new Random();
+		//Random rnd = new Random();
+		int biggestDistance = 0;
+		int i = 0;
 		
-		int i = rnd.nextInt(deck.count());
+		for (int j = 0; j < deck.count(); j++) {
+			int distance = 0;
+			Card c2 = deck.getAtIndex(j) ;
+			int cardRank = c2.rank.rankIndex();
+			if (c2.suit == Suit.CLUBS) {
+				if (cardRank > 7)
+					distance = cardRank - match.cHigh;
+				if (cardRank < 7)
+					distance = match.cLow - cardRank;
+			}
+			if (c2.suit == Suit.DIAMONDS) {
+				if (cardRank > 7)
+					distance = cardRank - match.dHigh;
+				if (cardRank < 7)
+					distance = match.dLow - cardRank;
+			}
+			if (c2.suit == Suit.HEARTS) {
+				if (cardRank > 7)
+					distance = cardRank - match.hHigh;
+				if (cardRank < 7)
+					distance = match.hLow - cardRank;
+			}
+			if (c2.suit == Suit.SPADES) {
+				if (cardRank > 7)
+					distance = cardRank - match.sHigh;
+				if (cardRank < 7)
+					distance = match.sLow - cardRank;
+			}
+			if (distance > biggestDistance) {
+				i = j;
+				biggestDistance = distance;
+			}
+				
+			
+		}
+		
+		//i = rnd.nextInt(deck.count());
 		Card c = deck.getAtIndex(i);
 		deck.deleteCardAtIndex(i);
 		return c;
@@ -35,8 +73,23 @@ public class Player {
 				i = j;
 		}
 		if (i == -1) {
-			Random rnd = new Random();
-			i = rnd.nextInt(res.size());
+			int mostSuitPals = 0;
+			int in = 0;
+			for (int j = 0; j < res.size(); j++) {
+				Card c2 = res.get(j);
+				int suitPals = cardOfSuit(c2.suit, c2.rank.rankIndex() > 7 ? true : false);
+				if (suitPals > mostSuitPals) {
+					in = j;
+					mostSuitPals = suitPals;
+				}
+			}
+			
+			
+			
+			
+			//Random rnd = new Random();
+			//i = rnd.nextInt(res.size());
+			i = in;
 		}
 		return res.get(i);
 		
@@ -91,6 +144,52 @@ public class Player {
 		String res = "";
 		for (Card c : deck) {
 			res += "" + c.rank.rankIndex() + c.suit + " ";
+		}
+		return res;
+	}
+	private int cardOfSuit(Suit suit, boolean above7) {
+		int res = 0;
+		for (Card c : deck) {
+			if (c.suit == suit) {
+				if (c.rank.rankIndex() > 7 && above7)
+					res++;
+				if (c.rank.rankIndex() < 7 && !above7)
+					res++;
+				if (c.rank.rankIndex() == 7)
+					res++;
+			}
+		}
+		return res;
+	}
+	public int shittinessRating(SevenMatch m) {
+		int res = 0;
+		for (Card c : deck) {
+			int r = c.rank.rankIndex();
+			if (c.suit == Suit.CLUBS) {
+				if (r > 7)
+					res+= r - m.cHigh;
+				if (r < 7)
+					res+= m.cLow - r;
+			}
+			else if (c.suit == Suit.DIAMONDS) {
+				if (r > 7)
+					res+= r - m.dHigh;
+				if (r < 7)
+					res+= m.dLow - r;
+					}
+			else if (c.suit == Suit.HEARTS) {
+				if (r > 7)
+					res+= r - m.hHigh;
+				if (r < 7)
+					res+= m.hLow - r;
+			}
+			else {
+				if (r > 7)
+					res+= r - m.sHigh;
+				if (r < 7)
+					res+= m.sLow - r;
+				
+			}
 		}
 		return res;
 	}
