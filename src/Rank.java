@@ -41,6 +41,8 @@ public enum Rank {
 		Rank rank;
 		if (rankStr.equalsIgnoreCase("A")) {
 			rank = ACE;
+		} else if (rankStr.equalsIgnoreCase("1")) {
+			rank = ACE;
 		} else if (rankStr.equalsIgnoreCase("2")) {
 			rank = TWO;
 		} else if (rankStr.equalsIgnoreCase("3")) {
@@ -62,6 +64,10 @@ public enum Rank {
 		} else if (rankStr.equalsIgnoreCase("J")) {
 			rank = JACK;
 		} else if (rankStr.equalsIgnoreCase("Q")) {
+			rank = QUEEN;
+		} else if (rankStr.equalsIgnoreCase("11")) {
+			rank = JACK;
+		} else if (rankStr.equalsIgnoreCase("12")) {
 			rank = QUEEN;
 		} else {
 			rank = KING;

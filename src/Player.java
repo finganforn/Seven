@@ -67,24 +67,30 @@ public class Player {
 		ArrayList<Card> res = playableCards(match);
 		if (res.size() == 0)
 			return null;
-		for (int j = 0; j < res.size(); j++) {
+		for (int j = 0; j < res.size() && i == -1; j++) {
 			Card c = res.get(j);
 			if (c.suit == Suit.CLUBS && c.rank == Rank.SEVEN)
 				i = j;
 		}
-		if (i == -1) {
-			int mostSuitPals = 0;
+		if (i == -1) {//inte klöver sju!
+			
+			
+			if (res.size() > 1)
+				res = mostUsefulCards(match, res);
+			int distFrom7 = 0;
 			int in = 0;
 			for (int j = 0; j < res.size(); j++) {
-				Card c2 = res.get(j);
-				int suitPals = cardOfSuit(c2.suit, c2.rank.rankIndex() > 7 ? true : false);
-				if (suitPals > mostSuitPals) {
+				int thisDistFrom7 = res.get(j).rank.rankIndex() - 7;
+				if (thisDistFrom7 < 0)
+					thisDistFrom7 = thisDistFrom7*-1;
+				if (thisDistFrom7 > distFrom7) {
 					in = j;
-					mostSuitPals = suitPals;
+					distFrom7 = thisDistFrom7;
 				}
+			
+					
+					
 			}
-			
-			
 			
 			
 			//Random rnd = new Random();
@@ -147,19 +153,109 @@ public class Player {
 		}
 		return res;
 	}
-	private int cardOfSuit(Suit suit, boolean above7) {
+	private int cardOfSuit(Card card) {
 		int res = 0;
 		for (Card c : deck) {
-			if (c.suit == suit) {
-				if (c.rank.rankIndex() > 7 && above7)
+			int c1Val = card.rank.rankIndex();
+			int c2Val = c.rank.rankIndex();
+			if (card.suit == c.suit && c1Val != c2Val) {
+				if (c1Val == 7)
 					res++;
-				if (c.rank.rankIndex() < 7 && !above7)
+				if (c1Val > 7 && c2Val > 7)
 					res++;
-				if (c.rank.rankIndex() == 7)
+				if (c1Val < 7 && c2Val < 7)
 					res++;
 			}
 		}
 		return res;
+	}
+	private int cardsMissing(Card c1) {
+		int res = 0;
+		for (Card c2 : deck) {
+			int c1Val = c1.rank.rankIndex();
+			int c2Val = c2.rank.rankIndex();
+			if (c1.suit == c2.suit && c1Val != c2Val) {
+				
+				//System.out.println("finding gaps between " + c1 + " and " + c2);
+				/*if (c2Val > 10 || c2Val == 1) {
+					System.out.println("special card!");
+				}*/
+				if (c1Val == 7) {
+					res++;
+					for (int i = c1Val+1; i < c2Val; i++) {
+						
+						
+						Card tempCard = new Card(Rank.fromString(Integer.toString(i)), c1.suit);
+						
+						if (!hasCard(tempCard)) {
+							//System.out.println("missing " + tempCard);
+							res++;
+						}
+					}
+					for (int i = c1Val-1; i > c2Val; i--) {
+
+						Card tempCard = new Card(Rank.fromString(Integer.toString(i)), c1.suit);
+						
+						if (!hasCard(tempCard)) {
+							//System.out.println("missing " + tempCard);
+							res++;
+						}
+					}
+				}
+				
+				if (c1Val > 7 && c2Val > 7) {
+					res++;
+					for (int i = c1Val+1; i < c2Val; i++) {
+						
+						Card tempCard = new Card(Rank.fromString(Integer.toString(i)), c1.suit);
+						
+						if (!hasCard(tempCard)) {
+							//System.out.println("missing " + tempCard);
+							res++;
+						}
+					}
+				}
+				if (c1Val < 7 && c2Val < 7) {
+					res++;
+					for (int i = c1Val-1; i > c2Val; i--) {
+
+						Card tempCard = new Card(Rank.fromString(Integer.toString(i)), c1.suit);
+						
+						if (!hasCard(tempCard)) {
+							//System.out.println("missing " + tempCard);
+							res++;
+						}
+					}
+				}
+			}
+		}
+		return res;
+		
+	}
+	private boolean hasCard(Card c) {
+		int b = deck.getIndexOfCard(c);
+		return b >= 0;
+	}
+	private ArrayList<Card> mostUsefulCards(SevenMatch match, ArrayList<Card> cards) {
+		ArrayList<Card> res = new ArrayList<Card>();
+		int mostSuitPals = 0;
+		for (int i = 0; i < cards.size(); i++) {
+			Card c2 = cards.get(i);
+			//orgiinal int suitPals = cardOfSuit(c2);
+			int suitPals = cardsMissing(c2);
+			if (suitPals > mostSuitPals) {
+				mostSuitPals = suitPals;
+			}
+		}
+		for (Card c : cards) {
+			//if (cardOfSuit(c) == mostSuitPals)
+			if (cardsMissing(c) == mostSuitPals)
+				res.add(c);
+		}
+			
+		System.out.println("best card(s): " + res  + ", rating " + mostSuitPals);
+		return res;
+		
 	}
 	public int shittinessRating(SevenMatch m) {
 		int res = 0;
@@ -192,6 +288,16 @@ public class Player {
 			}
 		}
 		return res;
+	}
+	public boolean hasIsolated7() {
+		
+
+		for (Card c : deck) {
+			if (c.rank.rankIndex() == 7 && cardOfSuit(c) == 0)
+				return true;
+		}
+		return false;
+		
 	}
 
 }

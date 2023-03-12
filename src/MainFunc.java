@@ -64,6 +64,12 @@ public class MainFunc {
 						currentMatch.deal();
 						currentMatch.sortAllPlayerDecks();
 						String msg = "match for " + pl + " players started";
+						//boolean playerWithIsolated7 = false;
+						for (int i = 0; i < currentMatch.getPlayers().size(); i++)
+						{
+							if (currentMatch.getPlayers().get(i).hasIsolated7())
+								System.out.println("player " + (i+1) + " has an isolated seven");
+						}
 						System.out.println(msg);
 						JOptionPane.showMessageDialog(null, msg);
 						System.out.println("house deck: " + currentMatch.getDeck());
