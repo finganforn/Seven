@@ -59,11 +59,11 @@ public class MainFunc {
 						int pl = Integer.parseInt(playersStr);
 						currentMatch = new SevenMatch(pl);
 						matchOn = true;
-						currentMatch.getDeck().shuffleDeck();
-						currentMatch.removePlayerCards();
-						currentMatch.deal();
-						currentMatch.sortAllPlayerDecks();
+						
 						String msg = "match for " + pl + " players started";
+						
+						System.out.println(currentMatch.playersInfo());
+						
 						//boolean playerWithIsolated7 = false;
 						for (int i = 0; i < currentMatch.getPlayers().size(); i++)
 						{
@@ -72,11 +72,10 @@ public class MainFunc {
 						}
 						System.out.println(msg);
 						JOptionPane.showMessageDialog(null, msg);
-						System.out.println("house deck: " + currentMatch.getDeck());
 						int opener = currentMatch.findOpeningPlayer();
 						currentMatch.currentTurn = opener;
 						if (matchOn) {
-							System.out.println("house deck: " + currentMatch.getDeck());
+							//System.out.println("house deck: " + currentMatch.getDeck());
 							for (int i = 0; i < currentMatch.getSize(); i++) {
 								System.out.println("player " + (i+1) + " deck: " + currentMatch.getPlayers().get(i).getPlayerDeck());
 								String cp = "player" + (i+1);
@@ -100,7 +99,12 @@ public class MainFunc {
 						matchOn = false;
 						return;
 					}
+					
+					
 					int pi = currentMatch.currentTurn;
+					
+					
+					
 					//System.out.println("asking playerI " + pi + " for a card");
 					Player p = currentMatch.getPlayers().get(pi);
 					System.out.println("player" + (pi+1) + " can play: " + p.playableCards(currentMatch));

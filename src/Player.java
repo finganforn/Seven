@@ -1,14 +1,38 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+
+
 public class Player {
 	
 	private boolean ai;
 	private Deck deck;
+	private String name;
+	private AiType aiType;
 	
-	public Player(boolean ai) {
+	public Player(boolean ai, String name) {
 		this.ai = ai;
 		deck = new Deck();
+		this.name = name;
+		Random rnd = new Random();
+		int i = rnd.nextInt(3);
+		if (i == 0)
+			aiType = AiType.DUMB;
+		else if (i == 1)
+			aiType = AiType.FRIENDLY;
+		else if (i == 2)
+			aiType = AiType.EVIL;
+		else
+			aiType = AiType.HUMAN;
+		if (!ai)
+			aiType = AiType.HUMAN;
+	}
+
+	public Player(boolean ai, String name, AiType type) {
+		this.ai = ai;
+		deck = new Deck();
+		this.name = name;
+		this.aiType = type;
 	}
 	public void giveCard(Card c) {
 		deck.addCard(c);
@@ -16,9 +40,24 @@ public class Player {
 	
 	
 	public Card selectTrashCard(SevenMatch match) {
-		//Random rnd = new Random();
+		Random rnd = new Random();
 		int biggestDistance = 0;
 		int i = 0;
+		
+		if (aiType == AiType.DUMB) {
+			int r = rnd.nextInt(deck.count());
+			try {
+				Card c = deck.getAtIndex(r);
+				deck.deleteCardAtIndex(r);
+				return c;
+				
+			}
+			catch (Exception ex) {
+				System.out.println(ex);
+			}
+			deck.deleteCardAtIndex(r);
+			return deck.getAtIndex(0);
+		}
 		
 		for (int j = 0; j < deck.count(); j++) {
 			int distance = 0;
@@ -74,6 +113,20 @@ public class Player {
 		}
 		if (i == -1) {//inte klöver sju!
 			
+			if (aiType == AiType.DUMB) {
+				ArrayList<Card> bestCards = mostUsefulCards(match, res);
+				Random rnd = new Random();
+				int r = rnd.nextInt(res.size());
+				try {
+					Card c = res.get(r);
+					return c;
+				}
+				catch (Exception ex) {
+					System.out.println(ex);
+				}
+				return deck.getAtIndex(0);
+				
+			}
 			
 			if (res.size() > 1)
 				res = mostUsefulCards(match, res);
@@ -83,9 +136,17 @@ public class Player {
 				int thisDistFrom7 = res.get(j).rank.rankIndex() - 7;
 				if (thisDistFrom7 < 0)
 					thisDistFrom7 = thisDistFrom7*-1;
-				if (thisDistFrom7 > distFrom7) {
-					in = j;
-					distFrom7 = thisDistFrom7;
+				if (aiType == AiType.FRIENDLY) {
+					if (thisDistFrom7 < distFrom7) {
+						in = j;
+						distFrom7 = thisDistFrom7;
+					}
+				}
+				else {
+					if (thisDistFrom7 > distFrom7) {
+						in = j;
+						distFrom7 = thisDistFrom7;
+					}
 				}
 			
 					
@@ -131,6 +192,12 @@ public class Player {
 	}
 	public Deck getPlayerDeck( ) {
 		return deck;
+	}
+	public String getName() {
+		return name;
+	}
+	public AiType getType() {
+		return aiType;
 	}
 	public boolean openingPlayer() {
 		return deck.contains7();

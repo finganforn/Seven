@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class SevenMatch {
 	
@@ -19,6 +21,14 @@ public class SevenMatch {
 	public int hHigh;
 	private ArrayList<String> results;
 	
+	private List<String> names = List.of("Adam", "Beda", "Cesare", "Dorotea", 
+			"Enrico", "Filippa", "Gregorius", "Hilda", "Ivan", "Jessica", 
+			"Konstantin", "Linda", "Melvin", "Nikki", "Orson", "Petronella",
+			"Quisling", "Rosselini", "Sylvester", "Trevor", "Umar", "Wolfgang",
+			"Guillaume", "Godwin", "Knut", "Segersäll", "Birger Jarl", 
+			"Bernadotte", "Gustav Vasa"
+			);
+	
 	public SevenMatch(int playerAmount) {
 		
 		cLow = cHigh = dLow = dHigh = sLow = sHigh = hLow = hHigh = 7;
@@ -27,19 +37,48 @@ public class SevenMatch {
 		deck.shuffleDeck();
 		players = new ArrayList<Player>();
 		results = new ArrayList<String>();
+		ArrayList<String> assignedNames = new ArrayList<String>();
 		
-		if (playerAmount > 8)
-			this.playerAmount = 8;
+		if (playerAmount > 20)
+			this.playerAmount = 20;
 		else if (playerAmount < 3)
 			this.playerAmount = 3;
 		else
 			this.playerAmount = playerAmount;
-		for (int i = 0; i < this.playerAmount; i++) {
-			players.add(new Player(true));
+		players.add(new Player(false, "Player1"));
+		for (int i = 1; i < this.playerAmount; i++) {
+			Random rnd = new Random();
+			String randomName = names.get(rnd.nextInt(names.size()));
+			boolean nameAdded = false;
+			while (!nameAdded) {
+				if (!assignedNames.contains(randomName)) {
+					assignedNames.add(randomName);
+					nameAdded = true;
+				}
+				else
+					randomName = names.get(rnd.nextInt(names.size()));
+					
+			}
+			
 		}
+		for (int i = 1; i < this.playerAmount; i++) {
+			players.add(new Player(true, assignedNames.get(i-1)));
+		}
+		deck.shuffleDeck();
+		removePlayerCards();
+		deal();
+		sortAllPlayerDecks();
 		
 		
 		
+	}
+	
+	public String playersInfo() {
+		String res = "";
+		for (Player p : players) {
+			res += "name: " + p.getName() + " AI: " + p.getType() + "\n";
+		}
+		return res;
 	}
 	public Deck getDeck() {
 		return deck;
