@@ -15,13 +15,15 @@ public class Player {
 		deck = new Deck();
 		this.name = name;
 		Random rnd = new Random();
-		int i = rnd.nextInt(3);
+		int i = rnd.nextInt(4);
 		if (i == 0)
 			aiType = AiType.DUMB;
 		else if (i == 1)
 			aiType = AiType.FRIENDLY;
 		else if (i == 2)
 			aiType = AiType.EVIL;
+		else if (i == 3)
+			aiType = AiType.SUICIDAL;
 		else
 			aiType = AiType.HUMAN;
 		if (!ai)
@@ -114,7 +116,7 @@ public class Player {
 		if (i == -1) {//inte klöver sju!
 			
 			if (aiType == AiType.DUMB) {
-				ArrayList<Card> bestCards = mostUsefulCards(match, res);
+				ArrayList<Card> bestCards = mostUsefulCards(match, res, true);
 				Random rnd = new Random();
 				int r = rnd.nextInt(res.size());
 				try {
@@ -128,8 +130,12 @@ public class Player {
 				
 			}
 			
-			if (res.size() > 1)
-				res = mostUsefulCards(match, res);
+			if (res.size() > 1) {
+				if (aiType == AiType.SUICIDAL)
+					res = mostUsefulCards(match, res, false);
+				else
+					res = mostUsefulCards(match, res, true);
+			}
 			int distFrom7 = 0;
 			int in = 0;
 			for (int j = 0; j < res.size(); j++) {
@@ -303,16 +309,18 @@ public class Player {
 		int b = deck.getIndexOfCard(c);
 		return b >= 0;
 	}
-	private ArrayList<Card> mostUsefulCards(SevenMatch match, ArrayList<Card> cards) {
+	private ArrayList<Card> mostUsefulCards(SevenMatch match, ArrayList<Card> cards, boolean win) {
 		ArrayList<Card> res = new ArrayList<Card>();
 		int mostSuitPals = 0;
 		for (int i = 0; i < cards.size(); i++) {
 			Card c2 = cards.get(i);
 			//orgiinal int suitPals = cardOfSuit(c2);
 			int suitPals = cardsMissing(c2);
-			if (suitPals > mostSuitPals) {
+			if (suitPals > mostSuitPals && win)
 				mostSuitPals = suitPals;
-			}
+			
+			if (suitPals < mostSuitPals && !win)
+				mostSuitPals = suitPals;;
 		}
 		for (Card c : cards) {
 			//if (cardOfSuit(c) == mostSuitPals)
@@ -320,7 +328,7 @@ public class Player {
 				res.add(c);
 		}
 			
-		System.out.println("best card(s): " + res  + ", rating " + mostSuitPals);
+		System.out.println(win ? "best card(s): " : "wost card(s)" + res  + ", rating " + mostSuitPals);
 		return res;
 		
 	}

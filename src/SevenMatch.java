@@ -106,6 +106,7 @@ public class SevenMatch {
 			if (players.get(i).openingPlayer())
 				res = i;
 		}
+		currentTurn = res;
 		return res;
 	}
 	public void sortAllPlayerDecks() {

@@ -73,7 +73,6 @@ public class MainFunc {
 						System.out.println(msg);
 						JOptionPane.showMessageDialog(null, msg);
 						int opener = currentMatch.findOpeningPlayer();
-						currentMatch.currentTurn = opener;
 						if (matchOn) {
 							//System.out.println("house deck: " + currentMatch.getDeck());
 							for (int i = 0; i < currentMatch.getSize(); i++) {
