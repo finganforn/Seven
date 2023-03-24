@@ -107,6 +107,9 @@ public class MainFunc {
 					//System.out.println("asking playerI " + pi + " for a card");
 					Player p = currentMatch.getPlayers().get(pi);
 					System.out.println("player" + (pi+1) + " can play: " + p.playableCards(currentMatch));
+					boolean canPlayAll = false;
+					if (p.shittinessRating(currentMatch) == 0)
+						canPlayAll = true;
 					if (p.getPlayerDeck().count() > 0) {
 						Card nc = currentMatch.getPlayers().get(pi).playCard(currentMatch);
 						if (currentMatch.currentTurn == 0) {
@@ -120,8 +123,17 @@ public class MainFunc {
 						System.out.println(currentMatch.matchStatus());
 						if ( nc != null) {
 							
-							currentMatch.playCard(nc);
-							System.out.println("player" + (pi+1) + " played " + nc);
+							//play 1 card
+							if (!canPlayAll) {
+								currentMatch.playCard(nc);
+								System.out.println("player" + (pi+1) + " played " + nc); 
+							}
+							else {
+								for (Card c : p.getPlayerDeck()) {
+									currentMatch.playCard(c);
+								}
+								p.clearDeck();
+							}
 							
 							if (p.getPlayerDeck().count() == 0) {
 								System.out.println("player " + (pi+1) + " is done!");
