@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -21,7 +22,7 @@ public class SevenMatch {
 	public int hHigh;
 	private ArrayList<String> results;
 	
-	private List<String> names = List.of("Adam", "Beda", "Cesare", "Dorotea", 
+	private List<String> names = Arrays.asList("Adam", "Beda", "Cesare", "Dorotea", 
 			"Enrico", "Filippa", "Gregorius", "Hilda", "Ivan", "Jessica", 
 			"Konstantin", "Linda", "Melvin", "Nikki", "Orson", "Petronella",
 			"Quisling", "Rosselini", "Sylvester", "Trevor", "Umar", "Wolfgang",

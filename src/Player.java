@@ -26,8 +26,11 @@ public class Player {
 			aiType = AiType.SUICIDAL;
 		else
 			aiType = AiType.HUMAN;
-		if (!ai)
-			aiType = AiType.HUMAN;
+		
+		
+		//if (ai) aiType = AiType.SUICIDAL; //TODO
+		
+		if (!ai) aiType = AiType.HUMAN;
 	}
 
 	public Player(boolean ai, String name, AiType type) {
@@ -46,7 +49,7 @@ public class Player {
 		int biggestDistance = 0;
 		int i = 0;
 		
-		if (aiType == AiType.DUMB) {
+		if (aiType == AiType.DUMB || aiType == AiType.SUICIDAL) { //TODO välj snällaske kortet
 			int r = rnd.nextInt(deck.count());
 			try {
 				Card c = deck.getAtIndex(r);
@@ -104,7 +107,12 @@ public class Player {
 		
 	}
 	public Card selectPlayCard(SevenMatch match) {
+		
+	
+			
+		
 		int i = -1;
+		
 		ArrayList<Card> res = playableCards(match);
 		if (res.size() == 0)
 			return null;
@@ -312,6 +320,8 @@ public class Player {
 	private ArrayList<Card> mostUsefulCards(SevenMatch match, ArrayList<Card> cards, boolean win) {
 		ArrayList<Card> res = new ArrayList<Card>();
 		int mostSuitPals = 0;
+		if (!win)
+			mostSuitPals = 10000;
 		for (int i = 0; i < cards.size(); i++) {
 			Card c2 = cards.get(i);
 			//orgiinal int suitPals = cardOfSuit(c2);
@@ -320,7 +330,7 @@ public class Player {
 				mostSuitPals = suitPals;
 			
 			if (suitPals < mostSuitPals && !win)
-				mostSuitPals = suitPals;;
+				mostSuitPals = suitPals;
 		}
 		for (Card c : cards) {
 			//if (cardOfSuit(c) == mostSuitPals)
@@ -328,7 +338,7 @@ public class Player {
 				res.add(c);
 		}
 			
-		System.out.println(win ? "best card(s): " : "wost card(s)" + res  + ", rating " + mostSuitPals);
+		System.out.println((win ? "best card(s): " : "wost card(s)") + res  + ", rating " + mostSuitPals);
 		return res;
 		
 	}
