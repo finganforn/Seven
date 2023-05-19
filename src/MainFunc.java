@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -129,9 +130,10 @@ public class MainFunc {
 								System.out.println("player" + (pi+1) + " played " + nc); 
 							}
 							else {
-								for (Card c : p.getPlayerDeck()) {
+								currentMatch.playCard(nc);
+								//ArrayList<Card> notherCard = new ArrayList<Card>();
+								for (Card c : p.getPlayerDeck()) 
 									currentMatch.playCard(c);
-								}
 								p.clearDeck();
 							}
 							
