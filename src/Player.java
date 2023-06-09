@@ -15,15 +15,14 @@ public class Player {
 		deck = new Deck();
 		this.name = name;
 		Random rnd = new Random();
-		int i = rnd.nextInt(4);
+		int i = rnd.nextInt(3);
 		if (i == 0)
 			aiType = AiType.DUMB;
 		else if (i == 1)
-			aiType = AiType.FRIENDLY;
+			aiType = AiType.SUICIDAL;
 		else if (i == 2)
 			aiType = AiType.EVIL;
-		else if (i == 3)
-			aiType = AiType.SUICIDAL;
+		// else if (i == 3) 	aiType = AiType.FRIENDLY;
 		else
 			aiType = AiType.HUMAN;
 		
@@ -270,7 +269,7 @@ public class Player {
 						
 						if (!hasCard(tempCard)) {
 							//System.out.println("missing " + tempCard);
-							res++;
+							res = res + 10;
 						}
 					}
 					for (int i = c1Val-1; i > c2Val; i--) {
@@ -279,7 +278,7 @@ public class Player {
 						
 						if (!hasCard(tempCard)) {
 							//System.out.println("missing " + tempCard);
-							res++;
+							res = res + 10;
 						}
 					}
 				}
@@ -292,7 +291,7 @@ public class Player {
 						
 						if (!hasCard(tempCard)) {
 							//System.out.println("missing " + tempCard);
-							res++;
+							res = res + 10;
 						}
 					}
 				}
@@ -304,7 +303,7 @@ public class Player {
 						
 						if (!hasCard(tempCard)) {
 							//System.out.println("missing " + tempCard);
-							res++;
+							res = res + 10;
 						}
 					}
 				}
