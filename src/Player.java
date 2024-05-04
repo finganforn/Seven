@@ -10,21 +10,27 @@ public class Player {
 	private String name;
 	private AiType aiType;
 	
-	public Player(boolean ai, String name) {
+	public Player(boolean ai, String name, boolean randomPersonality, AiType aiType) {
 		this.ai = ai;
 		deck = new Deck();
 		this.name = name;
-		Random rnd = new Random();
-		int i = rnd.nextInt(3);
-		if (i == 0)
-			aiType = AiType.DUMB;
-		else if (i == 1)
-			aiType = AiType.SUICIDAL;
-		else if (i == 2)
-			aiType = AiType.EVIL;
-		// else if (i == 3) 	aiType = AiType.FRIENDLY;
+		this.aiType = AiType.EVIL;
+		if (randomPersonality) {
+			Random rnd = new Random();
+			int i = rnd.nextInt(3);
+			if (i == 0)
+				aiType = AiType.DUMB;
+			else if (i == 1)
+				aiType = AiType.SUICIDAL;
+			else if (i == 2)
+				aiType = AiType.EVIL;
+			// else if (i == 3) 	aiType = AiType.FRIENDLY;
+			else
+				aiType = AiType.HUMAN; 
+		}
 		else
-			aiType = AiType.HUMAN;
+			aiType = AiType.EVIL;
+		
 		
 		
 		//if (ai) aiType = AiType.SUICIDAL; //TODO
@@ -131,7 +137,7 @@ public class Player {
 					return c;
 				}
 				catch (Exception ex) {
-					System.out.println(ex);
+					System.out.println("exception:" + ex.getMessage());
 				}
 				return deck.getAtIndex(0);
 				
@@ -208,6 +214,9 @@ public class Player {
 	}
 	public String getName() {
 		return name;
+	}
+	public void setName(String s) {
+		name = s;
 	}
 	public AiType getType() {
 		return aiType;
@@ -337,7 +346,7 @@ public class Player {
 				res.add(c);
 		}
 			
-		System.out.println((win ? "best card(s): " : "wost card(s)") + res  + ", rating " + mostSuitPals);
+		//System.out.println((win ? "best card(s): " : "wost card(s)") + res  + ", rating " + mostSuitPals);
 		return res;
 		
 	}

@@ -41,6 +41,37 @@ public class MainFunc {
         frame.getContentPane().add(BorderLayout.CENTER, midPanel);        
         frame.getContentPane().add(BorderLayout.SOUTH, bottomPanel);
         frame.setVisible(true);
+        
+        ArrayList<String> tNames = new ArrayList<String>();
+        for (int i = 0; i < 4; i++)
+        	tNames.add("player " + (i+1));
+		ArrayList<SevenMatch> testMatches = new ArrayList<SevenMatch>();
+		for (int i = 0; i < 30000; i++) {
+			SevenMatch m = new SevenMatch(tNames, false);
+			m.playerOneStarts();
+			m.simulateFullMatch(false);
+			//System.out.println(m.results);
+			testMatches.add(m);
+		}
+		int w1 = 0;
+		int w2 = 0;
+		int w3 = 0;
+		int w4 = 0;
+		for (SevenMatch m : testMatches) {
+			if (m.results.get(0).equals("player 1"))
+				w1++;
+			else if (m.results.get(0).equals("player 2"))
+				w2++;
+			else if (m.results.get(0).equals("player 3"))
+				w3++;
+			else if (m.results.get(0).equals("player 4"))
+				w4++;
+		}
+		int mc = testMatches.size();
+		System.out.println(mc + " matches, winrates:\np1: " + 100*w1/mc + "%\n" +
+				"w2: " + 100*w2/mc + "%\n" +
+				"w3: " + 100*w3/mc + "%\n" +
+				"w4: " + 100*w4/mc + "%\n");
 		
 		
 		send.addActionListener(new ActionListener() {
@@ -49,17 +80,22 @@ public class MainFunc {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				String playersStr = inputBox.getText();
+				
+				
+				
 				if (playersStr.equals("0")) {
 					matchOn = false;
 					System.out.println("RESET!");
 				}
+				
+				
 					
 				else if (matchOn == false) {
 					
 					try {
 						int pl = Integer.parseInt(playersStr);
 						ArrayList<String> nameList = SevenMatch.giveNameList(pl);
-						currentMatch = new SevenMatch(nameList);
+						currentMatch = new SevenMatch(nameList, true);
 						matchOn = true;
 						
 						String msg = "match for " + pl + " players started";
@@ -145,23 +181,10 @@ public class MainFunc {
 						}
 						else {
 							System.out.println("" + (pi+1) + " cant play!");
-							int previousPlayer = pi-1;
-							if (previousPlayer == -1)
-								previousPlayer = currentMatch.getPlayers().size() -1;
+							
+							int previousPlayer = currentMatch.getPreviousPlayer();
 							Player pp = currentMatch.getPlayers().get(previousPlayer);
-							boolean stillPlayingPlayer = false;
-							while (!stillPlayingPlayer) 
-							{
-								if (pp.getPlayerDeck().count() == 0) {
-									previousPlayer--;
-									if (previousPlayer == -1)
-										previousPlayer = currentMatch.getPlayers().size() - 1;
-									pp = currentMatch.getPlayers().get(previousPlayer);
-								}
-								else stillPlayingPlayer = true;
-								
-							}
-							Card trash = currentMatch.getPlayers().get(previousPlayer).selectTrashCard(currentMatch);
+							Card trash = pp.selectTrashCard(currentMatch);
 							p.giveCard(trash);
 							currentMatch.sortAllPlayerDecks();
 							

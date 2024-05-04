@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -8,6 +9,7 @@ public class SevenMatch {
 	
 
 	private ArrayList<Player> players;
+	public ArrayList<String> log;
 	private int playerAmount;
 	public int currentTurn = 0;
 	boolean matchDone = false;
@@ -20,7 +22,7 @@ public class SevenMatch {
 	public int sHigh;
 	public int hLow;
 	public int hHigh;
-	private ArrayList<String> results;
+	public ArrayList<String> results;
 	
 	
 	private static List<String> names = Arrays.asList("Adam", "Beda", "Cesare", "Dorotea", 
@@ -31,13 +33,14 @@ public class SevenMatch {
 			"Bernadotte", "Gustav Vasa"
 			);
 	
-	public SevenMatch(ArrayList<String> names) {
+	public SevenMatch(ArrayList<String> names, boolean randomPersonalities) {
 		
 		cLow = cHigh = dLow = dHigh = sLow = sHigh = hLow = hHigh = 7;
 		deck = new Deck();
 		deck.fullDeck();
 		deck.shuffleDeck();
 		results = new ArrayList<String>();
+		log = new ArrayList<String>();
 		playerAmount = names.size();
 		if (playerAmount > 20)
 			playerAmount = 20;
@@ -46,7 +49,10 @@ public class SevenMatch {
 		
 		players = new ArrayList<Player>();
 		for (int i = 0; i < playerAmount; i++) {
-			players.add(new Player(true, names.get(i)));
+			if (randomPersonalities)
+				players.add(new Player(true, names.get(i), true, null));
+			else
+				players.add(new Player(true, names.get(i), false, AiType.EVIL));
 		}
 		deck.shuffleDeck();
 		removePlayerCards();
@@ -198,8 +204,47 @@ public class SevenMatch {
 		}
 		return assignedNames;
 	}
-	public void simulateFullMatch() {
-		while (!this.matchDone) {
+	public int getPreviousPlayer() {
+		int previousPlayer = currentTurn-1;
+		if (previousPlayer == -1)
+			previousPlayer = getPlayers().size() -1;
+		Player pp = getPlayers().get(previousPlayer);
+		boolean stillPlayingPlayer = false;
+		while (!stillPlayingPlayer) 
+		{
+			if (pp.getPlayerDeck().count() == 0) {
+				previousPlayer--;
+				if (previousPlayer == -1)
+					previousPlayer = getPlayers().size() - 1;
+				pp = getPlayers().get(previousPlayer);
+			}
+			else stillPlayingPlayer = true;
+			
+		}
+		return previousPlayer;
+	}
+	public void playerOneStarts() {
+		int c7 = 0;
+		for (int i = 0; i < players.size(); i++) {
+			for (Card c : players.get(i).getPlayerDeck()) {
+				if (c.rank.rankIndex() == 7 && c.suit == Suit.CLUBS)
+					c7 = i;
+			}
+		}
+		if (c7 != 0) {
+			Collections.swap(players, 0, c7);
+			String tempN = players.get(0).getName();
+			players.get(0).setName(players.get(c7).getName());
+			players.get(c7).setName(tempN);
+			
+		}
+		currentTurn = 0;
+		
+	}
+	
+	public void simulateFullMatch(boolean log) {
+		this.matchDone = MatchOver();
+		while (!MatchOver()) {
 			Player p = players.get(currentTurn);
 			boolean done = p.getPlayerDeck().count() == 0;
 			if (!done) {
@@ -211,6 +256,7 @@ public class SevenMatch {
 						//play ALL
 						while (p.getPlayerDeck().count() > 0) {
 							 Card c = p.playCard(this);
+							 if (log) this.log.add(p.getName() + " played " + c);
 							 playCard(c);
 						}
 					}
@@ -218,17 +264,51 @@ public class SevenMatch {
 						//play 1
 						Card c = p.playCard(this);
 						playCard(c);
+						if (log) this.log.add(p.getName() + " played " + c);
 					}
+					//done?? put into scoreboard
+					if (p.getPlayerDeck().count() == 0)
+						results.add(p.getName());
+					
 				}
 				else 
 				{
 					//ask for card
+					int ppi = getPreviousPlayer();
+					Player pp = players.get(ppi);
+					Card tc = pp.selectTrashCard(this);
+					p.giveCard(tc);
+					if (log) this.log.add(pp.getName() + " gave " + tc + " to " + p.getName());
+					//pp done? put into scoreboard
+					if (pp.getPlayerDeck().count() == 0)
+						results.add(pp.getName());
+					
 				}
 				
+			}
+			if (log) {
+				this.log.add(this.matchStatus());
+				for (Player pi: players) {
+					this.log.add(pi.getName() + " " + pi.cardsAsStrings() + " " + pi.shittinessRating(this));
+				}
 			}
 			currentTurn++;
 			if (currentTurn > playerAmount-1)
 				currentTurn = 0;
+		}
+		//matchDone
+		//add loser
+		int remainingPlayers = 0;
+		for (Player p : players)
+		{
+			if (p.getPlayerDeck().count() > 0) {
+				remainingPlayers++;
+				results.add(p.getName());
+			}
+			
+		}
+		if (remainingPlayers != 1) {
+			System.out.println("INVALID AMOUNT OF REMAINING PLAYERS: " + remainingPlayers);
 		}
 	}
 
