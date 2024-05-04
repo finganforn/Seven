@@ -22,7 +22,8 @@ public class SevenMatch {
 	public int hHigh;
 	private ArrayList<String> results;
 	
-	private List<String> names = Arrays.asList("Adam", "Beda", "Cesare", "Dorotea", 
+	
+	private static List<String> names = Arrays.asList("Adam", "Beda", "Cesare", "Dorotea", 
 			"Enrico", "Filippa", "Gregorius", "Hilda", "Ivan", "Jessica", 
 			"Konstantin", "Linda", "Melvin", "Nikki", "Orson", "Petronella",
 			"Quisling", "Rosselini", "Sylvester", "Trevor", "Umar", "Wolfgang",
@@ -30,45 +31,28 @@ public class SevenMatch {
 			"Bernadotte", "Gustav Vasa"
 			);
 	
-	public SevenMatch(int playerAmount) {
+	public SevenMatch(ArrayList<String> names) {
 		
 		cLow = cHigh = dLow = dHigh = sLow = sHigh = hLow = hHigh = 7;
 		deck = new Deck();
 		deck.fullDeck();
 		deck.shuffleDeck();
-		players = new ArrayList<Player>();
 		results = new ArrayList<String>();
-		ArrayList<String> assignedNames = new ArrayList<String>();
-		
+		playerAmount = names.size();
 		if (playerAmount > 20)
-			this.playerAmount = 20;
+			playerAmount = 20;
 		else if (playerAmount < 3)
-			this.playerAmount = 3;
-		else
-			this.playerAmount = playerAmount;
-		players.add(new Player(false, "Player1"));
-		for (int i = 1; i < this.playerAmount; i++) {
-			Random rnd = new Random();
-			String randomName = names.get(rnd.nextInt(names.size()));
-			boolean nameAdded = false;
-			while (!nameAdded) {
-				if (!assignedNames.contains(randomName)) {
-					assignedNames.add(randomName);
-					nameAdded = true;
-				}
-				else
-					randomName = names.get(rnd.nextInt(names.size()));
-					
-			}
-			
-		}
-		for (int i = 1; i < this.playerAmount; i++) {
-			players.add(new Player(true, assignedNames.get(i-1)));
+			playerAmount = 3;
+		
+		players = new ArrayList<Player>();
+		for (int i = 0; i < playerAmount; i++) {
+			players.add(new Player(true, names.get(i)));
 		}
 		deck.shuffleDeck();
 		removePlayerCards();
 		deal();
 		sortAllPlayerDecks();
+		findOpeningPlayer();
 		
 		
 		
@@ -185,8 +169,67 @@ public class SevenMatch {
 		return res;
 	}
 	public boolean MatchOver() {
-		return cLow == 1 && cHigh == 13 && dLow == 1 && dHigh == 13 && hLow == 1 && hHigh == 13 && sLow == 1 && sHigh == 13;
+		int playersWithCards = 0;
+		for (Player p : players)
+		{
+			if (p.getPlayerDeck().count() > 0)
+				playersWithCards++;
+		}
+		return playersWithCards == 1;
+		//return cLow == 1 && cHigh == 13 && dLow == 1 && dHigh == 13 && hLow == 1 && hHigh == 13 && sLow == 1 && sHigh == 13;
 			
+	}
+	public static ArrayList<String> giveNameList(int num) {
+		ArrayList<String> assignedNames = new ArrayList<String>();
+		for (int i = 0; i < num; i++) {
+			Random rnd = new Random();
+			String randomName = names.get(rnd.nextInt(names.size()));
+			boolean nameAdded = false;
+			while (!nameAdded) {
+				if (!assignedNames.contains(randomName)) {
+					assignedNames.add(randomName);
+					nameAdded = true;
+				}
+				else
+					randomName = names.get(rnd.nextInt(names.size()));
+					
+			}
+			
+		}
+		return assignedNames;
+	}
+	public void simulateFullMatch() {
+		while (!this.matchDone) {
+			Player p = players.get(currentTurn);
+			boolean done = p.getPlayerDeck().count() == 0;
+			if (!done) {
+				if (p.canPlay(this))
+				{
+					//play
+					if (p.shittinessRating(this) == 0)
+					{
+						//play ALL
+						while (p.getPlayerDeck().count() > 0) {
+							 Card c = p.playCard(this);
+							 playCard(c);
+						}
+					}
+					else {
+						//play 1
+						Card c = p.playCard(this);
+						playCard(c);
+					}
+				}
+				else 
+				{
+					//ask for card
+				}
+				
+			}
+			currentTurn++;
+			if (currentTurn > playerAmount-1)
+				currentTurn = 0;
+		}
 	}
 
 	

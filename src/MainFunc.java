@@ -58,7 +58,8 @@ public class MainFunc {
 					
 					try {
 						int pl = Integer.parseInt(playersStr);
-						currentMatch = new SevenMatch(pl);
+						ArrayList<String> nameList = SevenMatch.giveNameList(pl);
+						currentMatch = new SevenMatch(nameList);
 						matchOn = true;
 						
 						String msg = "match for " + pl + " players started";
