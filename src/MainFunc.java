@@ -46,10 +46,10 @@ public class MainFunc {
         for (int i = 0; i < 4; i++)
         	tNames.add("player " + (i+1));
 		ArrayList<SevenMatch> testMatches = new ArrayList<SevenMatch>();
-		for (int i = 0; i < 30000; i++) {
+		for (int i = 0; i < 5000; i++) {
 			SevenMatch m = new SevenMatch(tNames, false);
-			m.playerOneStarts();
-			m.simulateFullMatch(false);
+			//m.playerOneStarts();
+			m.simulateFullMatch(true);
 			//System.out.println(m.results);
 			testMatches.add(m);
 		}
@@ -57,6 +57,7 @@ public class MainFunc {
 		int w2 = 0;
 		int w3 = 0;
 		int w4 = 0;
+		int w5 = 0;
 		for (SevenMatch m : testMatches) {
 			if (m.results.get(0).equals("player 1"))
 				w1++;
@@ -66,12 +67,15 @@ public class MainFunc {
 				w3++;
 			else if (m.results.get(0).equals("player 4"))
 				w4++;
+			else if (m.results.get(0).equals("player 5"))
+				w5++;
 		}
 		int mc = testMatches.size();
 		System.out.println(mc + " matches, winrates:\np1: " + 100*w1/mc + "%\n" +
 				"w2: " + 100*w2/mc + "%\n" +
 				"w3: " + 100*w3/mc + "%\n" +
-				"w4: " + 100*w4/mc + "%\n");
+				"w4: " + 100*w4/mc + "%\n" +
+				"w5: " + 100*w5/mc + "%\n");
 		
 		
 		send.addActionListener(new ActionListener() {

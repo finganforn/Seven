@@ -10,6 +10,7 @@ public class SevenMatch {
 
 	private ArrayList<Player> players;
 	public ArrayList<String> log;
+	//private boolean logit;
 	private int playerAmount;
 	public int currentTurn = 0;
 	boolean matchDone = false;
@@ -39,6 +40,7 @@ public class SevenMatch {
 		deck = new Deck();
 		deck.fullDeck();
 		deck.shuffleDeck();
+		//logit = logg;
 		results = new ArrayList<String>();
 		log = new ArrayList<String>();
 		playerAmount = names.size();
@@ -94,8 +96,11 @@ public class SevenMatch {
 	public int findOpeningPlayer() {
 		int res = -1;
 		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i).openingPlayer())
+			if (players.get(i).openingPlayer()) {
 				res = i;
+				currentTurn = res;
+				return res;
+			}
 		}
 		currentTurn = res;
 		return res;
@@ -224,13 +229,14 @@ public class SevenMatch {
 		return previousPlayer;
 	}
 	public void playerOneStarts() {
-		int c7 = 0;
+		int c7 = findOpeningPlayer();
+		/*int c7 = 0;
 		for (int i = 0; i < players.size(); i++) {
 			for (Card c : players.get(i).getPlayerDeck()) {
 				if (c.rank.rankIndex() == 7 && c.suit == Suit.CLUBS)
 					c7 = i;
 			}
-		}
+		}*/
 		if (c7 != 0) {
 			Collections.swap(players, 0, c7);
 			String tempN = players.get(0).getName();
